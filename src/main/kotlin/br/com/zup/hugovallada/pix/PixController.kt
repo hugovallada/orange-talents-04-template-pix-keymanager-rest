@@ -2,6 +2,7 @@ package br.com.zup.hugovallada.pix
 
 import br.com.zup.hugovallada.CadastraChavePixGrpcRequest
 import br.com.zup.hugovallada.KeyManagerGrpcServiceGrpc
+import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
@@ -29,7 +30,7 @@ class PixController(@Inject private val grpcClientCadastro : KeyManagerGrpcServi
                     }
                 }
         }catch (statusException: StatusRuntimeException){
-            println(statusException.message)
+            println(statusException)
             return HttpResponse.badRequest()
         }
     }

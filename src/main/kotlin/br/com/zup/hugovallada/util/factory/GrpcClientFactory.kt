@@ -1,4 +1,4 @@
-package br.com.zup.hugovallada.util
+package br.com.zup.hugovallada.util.factory
 
 import br.com.zup.hugovallada.KeyManagerGrpcServiceGrpc
 import io.grpc.ManagedChannel
