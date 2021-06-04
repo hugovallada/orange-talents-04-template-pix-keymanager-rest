@@ -5,9 +5,12 @@ micronaut:
 
 grpc:
   client:
+    plaintext: true
     max-retry-attempts: 10
 
   channels:
-    manager-pix:
+    pix-manager:
       address: 'localhost:50051'
+      plaintext: true
+      max-retry-attempts: 10
 
