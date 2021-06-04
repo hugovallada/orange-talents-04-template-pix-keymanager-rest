@@ -1,6 +1,6 @@
-applicationType: default
+applicationType: grpc
 defaultPackage: br.com.zup.hugovallada
 testFramework: junit
 sourceLanguage: kotlin
 buildTool: gradle_kotlin
-features: [annotation-api, app-name, data, data-jpa, gradle, hamcrest, http-client, jdbc-hikari, junit, kotlin, kotlin-application, logback, mockito, netty-server, postgres, readme, shade, testcontainers, yaml]
+features: [annotation-api, app-name, gradle, grpc, hamcrest, junit, kotlin, kotlin-application, logback, mockito, readme, shade, yaml]
