@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.com.zup.hugovallada";
+option java_outer_classname = "KeyManagerGrpc";
+
+package br.com.zup.hugovallada;
+
+import "google/protobuf/timestamp.proto";
+
+service KeyManagerGrpcService{
+  rpc cadastrarChave(CadastraChavePixGrpcRequest) returns (CadastraChavePixGrpcResponse){}
+
+  rpc deletarChave(DeletarChavePixGrpcRequest) returns (DeletarChavePixGrpcResponse){}
+}
+
+service SearchPixKeyService {
+  rpc consultarChave(DadosDeConsultaGrpcRequest) returns (DadosChavePixGrpcResponse){}
+}
+
+service ListPixKeyService{
+  rpc listarChaves(IdDoClienteGrpcRequest) returns (ListaPixGrpcResponse){}
+}
+
+message IdDoClienteGrpcRequest{
+  string id = 1;
+}
+
+message ListaPixGrpcResponse{
+  message ChavePixResponse{
+    string pixId = 1;
+    string clienteId = 2;
+    string valor = 3;
+    TipoDeChave tipo = 4;
+    TipoDeConta tipoConta = 5;
+    google.protobuf.Timestamp criadaEm = 6;
+  }
+
+  repeated ChavePixResponse chaves= 1;
+
+}
+
+message DadosDeConsultaGrpcRequest {
+  message DadosPorPixId{
+    string clienteId = 1;
+    string pixId = 2;
+  }
+  // um ou outro
+  oneof filtro {
+    DadosPorPixId pixId = 1;
+    string chave = 2;
+  }
+}
+
+message DadosChavePixGrpcResponse {
+  message DadosChavePix{
+
+    message DadosConta{
+      TipoDeConta tipo = 1;
+      string instituicao = 2;
+      string nomeDoTitular = 3;
+      string cpfDoTitular = 4;
+      string agencia = 5;
+      string numeroDaConta = 6;
+    }
+
+    TipoDeChave tipo = 1;
+    string chave = 2;
+    DadosConta conta = 3;
+    google.protobuf.Timestamp criadaEm = 4;
+  }
+  string idCliente = 1;
+  string idPix = 2;
+  DadosChavePix chavePix = 3;
+}
+
+message DeletarChavePixGrpcRequest{
+  string  idPix = 1;
+  string idCliente = 2;
+}
+
+message DeletarChavePixGrpcResponse{
+  string mensagem = 1;
+}
+
+message CadastraChavePixGrpcRequest {
+  string idCliente = 1;
+  TipoDeChave tipoDeChave = 2;
+  string valorChave = 3;
+  TipoDeConta tipoDeConta = 4;
+}
+
+message CadastraChavePixGrpcResponse {
+  string id = 1;
+}
+
+enum TipoDeChave {
+  DESCONHECIDO = 0;
+  CPF = 1;
+  TELEFONE_CELULAR = 2;
+  EMAIL = 3;
+  CHAVE_ALEATORIA = 4;
+}
+
+enum TipoDeConta {
+  DESCONHECIDA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
+}
