@@ -33,7 +33,7 @@ class ValidPixKeyValidator : ConstraintValidator<ValidPixKey, NovaChavePixReques
         if(value.valor.isNullOrBlank() && value.tipoDeChave != TipoDeChave.CHAVE_ALEATORIA) return false
 
         if(value.tipoDeChave == TipoDeChave.EMAIL){
-            EmailValidator().run {
+            return value.valor!!.matches("^[0-9]{11}\$".toRegex()) && CPFValidator().run {
                 initialize(null)
                 isValid(value.valor, null)
             }
