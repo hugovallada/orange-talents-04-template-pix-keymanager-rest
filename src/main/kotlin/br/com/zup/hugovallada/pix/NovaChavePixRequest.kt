@@ -1,5 +1,6 @@
 package br.com.zup.hugovallada.pix
 
+import br.com.zup.hugovallada.CadastraChavePixGrpcRequest
 import br.com.zup.hugovallada.TipoDeChave
 import br.com.zup.hugovallada.TipoDeConta
 import br.com.zup.hugovallada.util.validator.ValidPixKey
@@ -18,4 +19,13 @@ data class NovaChavePixRequest(
     val tipoDeChave: TipoDeChave,
     @field:NotNull
     val tipoDeConta: TipoDeConta
-)
+){
+    fun toGrpc(): CadastraChavePixGrpcRequest {
+        return CadastraChavePixGrpcRequest.newBuilder()
+            .setIdCliente(idCliente)
+            .setTipoDeChave(tipoDeChave)
+            .setTipoDeConta(tipoDeConta)
+            .setValorChave(valor ?: "")
+            .build()
+    }
+}

@@ -30,7 +30,7 @@ internal class PixControllerTest {
         value = [
             "email2email, EMAIL",
             "valores, TELEFONE_CELULAR",
-            "928288bc2, CPF",
+            "1111111111, CPF",
             "novidade, CHAVE_ALEATORIA"
         ]
     )

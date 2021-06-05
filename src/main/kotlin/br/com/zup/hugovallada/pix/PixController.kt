@@ -1,6 +1,5 @@
 package br.com.zup.hugovallada.pix
 
-import br.com.zup.hugovallada.CadastraChavePixGrpcRequest
 import br.com.zup.hugovallada.KeyManagerGrpcServiceGrpc
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
@@ -16,16 +15,10 @@ class PixController(@Inject private val grpcClientCadastro: KeyManagerGrpcServic
 
     @Post
     fun cadastrarPix(@Body @Valid cadastroPixRequest: NovaChavePixRequest): HttpResponse<NovaChavePixResponse> {
-        CadastraChavePixGrpcRequest.newBuilder()
-            .setIdCliente(cadastroPixRequest.idCliente)
-            .setTipoDeChave(cadastroPixRequest.tipoDeChave)
-            .setTipoDeConta(cadastroPixRequest.tipoDeConta)
-            .setValorChave(cadastroPixRequest.valor ?: "")
-            .build().run {
-                grpcClientCadastro.cadastrarChave(this).run {
-                    return HttpResponse.created(NovaChavePixResponse(this))
-                }
-            }
+        grpcClientCadastro.cadastrarChave(cadastroPixRequest.toGrpc()).run {
+            return HttpResponse.created(NovaChavePixResponse(this))
+        }
     }
 }
+
 
