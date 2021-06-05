@@ -35,10 +35,20 @@ internal class PixControllerTest{
         }
     }
 
+    @Test // TODO: Mockar grpc ???
+    internal fun `deve cadastrar uma chave  quando os dados forem validos`() {
+        val request = HttpRequest.POST("/api/v1/pix",geraChavePix(true,true,"CHAVE_ALEATORIA"))
+        val response = client.toBlocking().exchange(request, HttpResponse::class.java)
+
+        with(response){
+            assertEquals(HttpStatus.CREATED, response.status)
+        }
+    }
+
     private fun geraChavePix(randomica: Boolean, idValido: Boolean, tipo: String): NovaChavePixRequest {
         return NovaChavePixRequest(
             idCliente = if (idValido) UUID.randomUUID().toString() else "naoEValido",
-            valor = if(randomica) UUID.randomUUID().toString() else "email@email.com",
+            valor = if(randomica) null else "email@email.com",
             tipoDeChave = TipoDeChave.valueOf(tipo),
             tipoDeConta = TipoDeConta.CONTA_CORRENTE
         )

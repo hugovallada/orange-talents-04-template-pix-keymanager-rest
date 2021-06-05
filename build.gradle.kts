@@ -53,6 +53,8 @@ java {
     sourceCompatibility = JavaVersion.toVersion("11")
 }
 
+
+
 tasks {
     compileKotlin {
         kotlinOptions {
@@ -65,7 +67,9 @@ tasks {
         }
     }
 
-
+test{
+    useJUnitPlatform()
+}
 }
 sourceSets {
     main {
