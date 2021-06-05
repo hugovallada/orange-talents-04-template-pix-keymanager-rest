@@ -5,6 +5,7 @@ import br.com.zup.hugovallada.KeyManagerGrpcServiceGrpc
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
@@ -30,8 +31,14 @@ class PixController(@Inject private val grpcClientCadastro : KeyManagerGrpcServi
                     }
                 }
         }catch (statusException: StatusRuntimeException){
-            println(statusException)
-            return HttpResponse.badRequest()
+           return when(statusException.status.code){
+               Status.ALREADY_EXISTS.code -> HttpResponse.unprocessableEntity()
+               Status.INVALID_ARGUMENT.code -> HttpResponse.badRequest()
+               Status.FAILED_PRECONDITION.code -> HttpResponse.badRequest()
+               Status.PERMISSION_DENIED.code -> HttpResponse.unauthorized()
+               Status.NOT_FOUND.code -> HttpResponse.notFound()
+               else -> HttpResponse.badRequest()
+           }
         }
     }
 

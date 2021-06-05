@@ -67,9 +67,7 @@ tasks {
         }
     }
 
-test{
-    useJUnitPlatform()
-}
+
 }
 sourceSets {
     main {
