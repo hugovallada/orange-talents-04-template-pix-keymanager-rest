@@ -43,6 +43,10 @@ dependencies {
 
     testImplementation("io.micronaut:micronaut-http-client")
 
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
+
+
+
 }
 
 
