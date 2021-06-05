@@ -45,6 +45,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
 
+    implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
+    implementation("org.hibernate:hibernate-validator:6.1.6.Final")
 
 
 }

@@ -25,17 +25,6 @@ internal class PixControllerTest {
     @Inject
     lateinit var client: HttpClient
 
-//    @Test
-//    internal fun `nao deve cadastrar uma chave quando um dado de entrada for invalido`() {
-//        val request = HttpRequest.POST("/", geraChavePix(false, true, "CPF"))
-//
-//        assertThrows<HttpClientResponseException> {
-//            client.toBlocking().exchange(request, HttpResponse::class.java)
-//        }.run {
-//            assertEquals(HttpStatus.BAD_REQUEST, response.status)
-//        }
-//    }
-
     @ParameterizedTest
     @CsvSource(
         value = [
