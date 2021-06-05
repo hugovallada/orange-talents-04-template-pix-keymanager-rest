@@ -10,7 +10,7 @@ grpc:
 
   channels:
     pix-manager:
-      address: 'localhost:50051'
+      address: ${PIX_MANAGER_ADDRESS:`localhost:50051`}
       plaintext: true
       max-retry-attempts: 10
 
