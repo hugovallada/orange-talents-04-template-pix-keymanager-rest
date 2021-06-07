@@ -33,7 +33,8 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
 
     CPF(TipoDeChave.CPF) {
         override fun valida(chave: String?): Boolean {
-            return chave!!.matches("^[0-9]{11}\$".toRegex()) && CPFValidator().run {
+            if(chave.isNullOrBlank()) return false
+            return chave.matches("^[0-9]{11}\$".toRegex()) && CPFValidator().run {
                 initialize(null)
                 isValid(chave, null)
             }
@@ -41,6 +42,8 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
     },
     EMAIL(TipoDeChave.EMAIL) {
         override fun valida(chave: String?): Boolean {
+            if(chave.isNullOrBlank()) return false
+
             return EmailValidator().run {
                 initialize(null)
                 isValid(chave, null)
@@ -50,7 +53,8 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
 
     TELEFONE_CELULAR(TipoDeChave.TELEFONE_CELULAR) {
         override fun valida(chave: String?): Boolean {
-            return chave!!.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
+            if(chave.isNullOrEmpty()) return false
+            return chave.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
         }
     },
 
