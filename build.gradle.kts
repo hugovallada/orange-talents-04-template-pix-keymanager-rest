@@ -8,6 +8,8 @@ plugins {
     id("com.google.protobuf") version "0.8.15"
 }
 
+
+
 version = "0.1"
 group = "br.com.zup.hugovallada"
 
@@ -40,6 +42,7 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest")
 
     testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-inline:3.8.0") // necessária para mockar o Stub
 
     testImplementation("io.micronaut:micronaut-http-client")
 
