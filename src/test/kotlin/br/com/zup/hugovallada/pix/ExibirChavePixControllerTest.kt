@@ -25,7 +25,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @MicronautTest
-internal class ConsultarChavePixControllerTest{
+internal class ExibirChavePixControllerTest{
 
     @Inject
     lateinit var grpcClient: SearchPixKeyServiceBlockingStub
