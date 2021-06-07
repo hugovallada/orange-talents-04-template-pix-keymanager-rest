@@ -5,8 +5,6 @@ import br.com.zup.hugovallada.pix.NovaChavePixRequest
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.validation.validator.constraints.ConstraintValidator
 import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
-import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 import javax.inject.Singleton
 import javax.validation.Constraint
 import javax.validation.Payload
@@ -30,28 +28,8 @@ class ValidPixKeyValidator : ConstraintValidator<ValidPixKey, NovaChavePixReques
         context: ConstraintValidatorContext
     ): Boolean {
         if(value?.tipoDeChave == null) return false
-        if(value.valor.isNullOrBlank() && value.tipoDeChave != TipoDeChave.CHAVE_ALEATORIA) return false
 
-        if(value.tipoDeChave == TipoDeChave.EMAIL){
-            return EmailValidator().run {
-                initialize(null)
-                isValid(value.valor, null)
-            }
-        }
-
-        if(value.tipoDeChave == TipoDeChave.TELEFONE_CELULAR){
-            return value.valor!!.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
-        }
-
-        if(value.tipoDeChave == TipoDeChave.CPF){
-            return value.valor!!.matches("^[0-9]{11}\$".toRegex()) && CPFValidator().run {
-                initialize(null)
-                isValid(value.valor, null)
-            }
-        }
-
-        return value.valor.isNullOrBlank() && value.tipoDeChave == TipoDeChave.CHAVE_ALEATORIA
-
+        return value.tipoDeChave.valida(value.valor)
     }
 
 }
