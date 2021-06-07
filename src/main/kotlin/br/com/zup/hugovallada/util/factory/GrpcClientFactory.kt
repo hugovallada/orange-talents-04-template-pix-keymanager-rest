@@ -7,10 +7,12 @@ import io.micronaut.grpc.annotation.GrpcChannel
 import javax.inject.Singleton
 
 @Factory
-class GrpcClientFactory {
+class GrpcClientFactory(@GrpcChannel("pix-manager") private val channel: ManagedChannel) {
 
     @Singleton
-    fun cadastrarClientStub(@GrpcChannel(value = "pix-manager") channel: ManagedChannel): KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceBlockingStub?{
+    fun criaDeletaClientStub(): KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceBlockingStub?{
         return KeyManagerGrpcServiceGrpc.newBlockingStub(channel)
     }
+
+
 }
