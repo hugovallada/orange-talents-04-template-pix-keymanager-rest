@@ -52,15 +52,15 @@ internal class ConsultarChavePixControllerTest{
         with(response){
             assertEquals(HttpStatus.OK, status)
             assertNotNull(body)
-            assertEquals("email@email.com", body()!!.dadosChave.chave)
+            assertEquals("email@email.com", body()!!.chave.valor)
             assertEquals(chaveId, body()!!.idPix)
             assertEquals(clienteId, body()!!.idCliente)
-            assertEquals("ITAU UNIBANCO S.A", body()!!.dadosChave.conta.instituicao)
-            assertEquals("888292",body()!!.dadosChave.conta.numeroDaConta)
-            assertEquals("99922",body()!!.dadosChave.conta.agencia)
-            assertEquals("Hugo", body()!!.dadosChave.conta.nomeDoTitular)
-            assertEquals("42222211", body()!!.dadosChave.conta.cpfDoTitular)
-            assertEquals(TipoDeChave.EMAIL, body()!!.dadosChave.tipo)
+            assertEquals("ITAU UNIBANCO S.A", body()!!.chave.conta.instituicao)
+            assertEquals("888292",body()!!.chave.conta.numeroDaConta)
+            assertEquals("99922",body()!!.chave.conta.agencia)
+            assertEquals("Hugo", body()!!.chave.conta.nomeDoTitular)
+            assertEquals("42222211", body()!!.chave.conta.cpfDoTitular)
+            assertEquals(TipoDeChave.EMAIL, body()!!.chave.tipo)
 
         }
 
