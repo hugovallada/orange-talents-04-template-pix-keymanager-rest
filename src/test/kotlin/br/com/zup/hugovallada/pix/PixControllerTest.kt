@@ -1,7 +1,5 @@
 package br.com.zup.hugovallada.pix
 
-import br.com.zup.hugovallada.TipoDeChave
-import br.com.zup.hugovallada.TipoDeConta
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
@@ -11,6 +9,8 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,7 +30,7 @@ internal class PixControllerTest {
         value = [
             "email2email, EMAIL",
             "valores, TELEFONE_CELULAR",
-            "1111111111, CPF",
+            "43898432298, CPF",
             "novidade, CHAVE_ALEATORIA"
         ]
     )
@@ -47,7 +47,7 @@ internal class PixControllerTest {
 
     @Test // TODO: Mockar grpc ???
     internal fun `deve cadastrar uma chave  quando os dados forem validos`() {
-        val chave = geraChavePix(true, true, "CHAVE_ALEATORIA")
+        val chave = NovaChavePixRequest("30329879030",TipoDeChaveRequest.CPF,TipoDeContaRequest.CONTA_CORRENTE)
 
         val request = HttpRequest.POST("/c56dfef4-7901-44fb-84e2-a2cefb157890/pix", chave)
 
@@ -70,6 +70,38 @@ internal class PixControllerTest {
 
             }
        }
+    }
+
+    @Nested
+    inner class Unprocessable{
+
+
+        @BeforeEach
+        internal fun setUp() {
+            val chave = NovaChavePixRequest("87923661049",TipoDeChaveRequest.CPF,TipoDeContaRequest.CONTA_CORRENTE)
+
+            val request = HttpRequest.POST("/c56dfef4-7901-44fb-84e2-a2cefb157890/pix", chave)
+            val response = client.toBlocking().exchange(request, HttpResponse::class.java)
+
+
+        }
+
+        @Test
+        internal fun `deve retornar um status processable entity quando tentar cadastrar uma chave que ja existe`() {
+            val chave = NovaChavePixRequest("87923661049",TipoDeChaveRequest.CPF,TipoDeContaRequest.CONTA_CORRENTE)
+
+            val request = HttpRequest.POST("/c56dfef4-7901-44fb-84e2-a2cefb157890/pix", chave)
+
+            assertThrows<HttpClientResponseException> {
+                val response = client.toBlocking().exchange(request, HttpResponse::class.java)
+
+                with(response) {
+                    assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.status)
+                    assertEquals("Essa chave já está cadastrada", response.body().getAttribute("message"))
+                }
+            }
+
+        }
     }
 
     private fun geraChavePix(randomica: Boolean, idValido: Boolean, tipo: String): NovaChavePixRequest {

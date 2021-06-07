@@ -18,7 +18,7 @@ class PixController(@Inject private val grpcClientCadastro: KeyManagerGrpcServic
     private val LOGGER = LoggerFactory.getLogger(this::class.java)
 
     @Post
-    fun cadastrarPix(clienteId: UUID,@Body @Valid cadastroPixRequest: NovaChavePixRequest): HttpResponse<NovaChavePixResponse> {
+    fun cadastrarPix(clienteId: UUID,@Body @Valid cadastroPixRequest: NovaChavePixRequest): HttpResponse<Any> {
         LOGGER.info("Cadastrando uma chave pix...")
         grpcClientCadastro.cadastrarChave(cadastroPixRequest.toGrpc(clienteId)).run {
             return HttpResponse.created(location(clienteId = clienteId, pixId = id))
