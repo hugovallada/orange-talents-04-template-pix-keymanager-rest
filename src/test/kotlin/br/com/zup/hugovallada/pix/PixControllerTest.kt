@@ -1,6 +1,7 @@
 package br.com.zup.hugovallada.pix
 
 import br.com.zup.hugovallada.CadastraChavePixGrpcResponse
+import br.com.zup.hugovallada.DeletarChavePixGrpcResponse
 import br.com.zup.hugovallada.KeyManagerGrpcServiceGrpc
 import br.com.zup.hugovallada.util.factory.GrpcClientFactory
 import io.grpc.Status
@@ -78,6 +79,24 @@ internal class PixControllerTest {
             assertEquals(HttpStatus.CREATED, response.status)
             assertTrue(response.headers.contains("Location"))
             assertTrue(response.header("Location")!!.contains(pixId))
+        }
+    }
+
+    @Test
+    internal fun `deve retornar o status 204 quando uma chave for deletada`() {
+        val pixId = UUID.randomUUID().toString()
+        val request = HttpRequest.DELETE("/c56dfef4-7901-44fb-84e2-a2cefb157890/pix/$pixId", Any::class.java)
+
+        val respostaGrpc = DeletarChavePixGrpcResponse.newBuilder()
+            .setMensagem("Chave com id $pixId foi deletada").build()
+
+        BDDMockito.given(registraStub.deletarChave(Mockito.any()))
+            .willReturn(respostaGrpc)
+
+        val response = client.toBlocking().exchange(request, HttpResponse::class.java)
+
+        with(response){
+            assertEquals(HttpStatus.NO_CONTENT, response.status)
         }
     }
 
