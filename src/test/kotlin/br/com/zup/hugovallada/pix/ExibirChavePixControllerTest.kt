@@ -1,23 +1,21 @@
 package br.com.zup.hugovallada.pix
 
 import br.com.zup.hugovallada.*
+import br.com.zup.hugovallada.ListPixKeyServiceGrpc.ListPixKeyServiceBlockingStub
 import br.com.zup.hugovallada.SearchPixKeyServiceGrpc.SearchPixKeyServiceBlockingStub
 import br.com.zup.hugovallada.util.factory.GrpcClientFactory
 import com.google.protobuf.Timestamp
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Replaces
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito
 import org.mockito.Mockito
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -28,7 +26,10 @@ import javax.inject.Singleton
 internal class ExibirChavePixControllerTest{
 
     @Inject
-    lateinit var grpcClient: SearchPixKeyServiceBlockingStub
+    lateinit var searchKeyClient: SearchPixKeyServiceBlockingStub
+
+    @Inject
+    lateinit var listKeysClient: ListPixKeyServiceBlockingStub
 
     @Inject
     @field:Client("/api/v1/clientes")
@@ -39,7 +40,7 @@ internal class ExibirChavePixControllerTest{
         val chaveId = UUID.randomUUID().toString()
         val clienteId = UUID.randomUUID().toString()
 
-        BDDMockito.given(grpcClient.consultarChave(DadosDeConsultaGrpcRequest.newBuilder()
+        BDDMockito.given(searchKeyClient.consultarChave(DadosDeConsultaGrpcRequest.newBuilder()
             .setPixId(DadosDeConsultaGrpcRequest.DadosPorPixId.newBuilder()
                 .setPixId(chaveId).setClienteId(clienteId).build()).build()))
             .willReturn(geraResponseGrpc(clienteId, chaveId))
@@ -64,6 +65,42 @@ internal class ExibirChavePixControllerTest{
 
         }
 
+    }
+
+    @Test
+    internal fun `deve retornar uma lista de chaves pix`() {
+        val clienteId = UUID.randomUUID().toString()
+
+        BDDMockito.given(listKeysClient.listarChaves(IdDoClienteGrpcRequest.newBuilder()
+            .setId(clienteId).build()))
+            .willReturn(geraListaGrpc(clienteId))
+
+
+        val request = HttpRequest.GET<Any>("/$clienteId/")
+        val response = client.toBlocking().exchange(request, List::class.java)
+
+        with(response){
+            assertEquals(HttpStatus.OK, status)
+            assertNotNull(body)
+            assertTrue(body.get().size == 3)
+        }
+
+    }
+
+    private fun geraListaGrpc(clienteId: String): ListaPixGrpcResponse? {
+        return ListaPixGrpcResponse.newBuilder()
+            .addChaves(geraPixResponse(clienteId, "email@email.com", TipoDeChave.EMAIL))
+            .addChaves(geraPixResponse(clienteId, UUID.randomUUID().toString(), TipoDeChave.CHAVE_ALEATORIA))
+            .addChaves(geraPixResponse(clienteId, "35698376599", TipoDeChave.CPF))
+            .build()
+    }
+
+
+    private fun geraPixResponse(clienteId: String, valor: String, tipo: TipoDeChave): ListaPixGrpcResponse.ChavePixResponse? {
+        return ListaPixGrpcResponse.ChavePixResponse.newBuilder()
+            .setClienteId(clienteId).setPixId(UUID.randomUUID().toString())
+            .setValor(valor).setTipoConta(TipoDeConta.CONTA_CORRENTE)
+            .setTipo(tipo).build()
     }
 
     private fun geraResponseGrpc(clienteId: String, pixId: String): DadosChavePixGrpcResponse? {
@@ -102,9 +139,11 @@ internal class ExibirChavePixControllerTest{
     @Factory
     @Replaces(factory = GrpcClientFactory::class)
     internal class GrpcFactory {
-
         @Singleton
         fun mockSearchKeyStub() = Mockito.mock(SearchPixKeyServiceBlockingStub::class.java)
+
+        @Singleton
+        fun mockListStub() = Mockito.mock(ListPixKeyServiceBlockingStub::class.java)
     }
 
 }
