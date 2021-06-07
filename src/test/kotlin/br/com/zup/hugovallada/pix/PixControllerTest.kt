@@ -21,7 +21,7 @@ import javax.inject.Inject
 @MicronautTest(transactional = false)
 internal class PixControllerTest {
 
-    @field:Client("/api/v1/pix")
+    @field:Client("/api/v1/clientes")
     @Inject
     lateinit var client: HttpClient
 
@@ -35,8 +35,8 @@ internal class PixControllerTest {
         ]
     )
     internal fun `nao deve cadastrar uma chave quando nao for uma pix valida`(chave: String, tipo: String) {
-        val pixRequest = NovaChavePixRequest(UUID.randomUUID().toString(),chave, TipoDeChave.valueOf(tipo), TipoDeConta.CONTA_CORRENTE)
-        val request = HttpRequest.POST("/", pixRequest)
+        val pixRequest = NovaChavePixRequest(chave, TipoDeChaveRequest.valueOf(tipo), TipoDeContaRequest.CONTA_CORRENTE)
+        val request = HttpRequest.POST("/${UUID.randomUUID().toString()}/pix", pixRequest)
 
         assertThrows<HttpClientResponseException> {
             client.toBlocking().exchange(request, HttpResponse::class.java)
@@ -49,7 +49,7 @@ internal class PixControllerTest {
     internal fun `deve cadastrar uma chave  quando os dados forem validos`() {
         val chave = geraChavePix(true, true, "CHAVE_ALEATORIA")
 
-        val request = HttpRequest.POST("/", chave)
+        val request = HttpRequest.POST("/c56dfef4-7901-44fb-84e2-a2cefb157890/pix", chave)
 
 
         val response = client.toBlocking().exchange(request, HttpResponse::class.java)
@@ -61,7 +61,7 @@ internal class PixControllerTest {
 
     @Test
     internal fun `nao deve cadastrar uma chave quando  o cliente nao for encontrado e deve retornar um status 404`() {
-        val request = HttpRequest.POST("/", NovaChavePixRequest(UUID.randomUUID().toString(), tipoDeConta = TipoDeConta.CONTA_CORRENTE, tipoDeChave = TipoDeChave.CHAVE_ALEATORIA))
+        val request = HttpRequest.POST("/${UUID.randomUUID().toString()}/pix", NovaChavePixRequest(tipoDeConta = TipoDeContaRequest.CONTA_CORRENTE, tipoDeChave = TipoDeChaveRequest.CHAVE_ALEATORIA))
 
        assertThrows<HttpClientResponseException> {
            val response = client.toBlocking().exchange(request, HttpResponse::class.java)
@@ -74,10 +74,9 @@ internal class PixControllerTest {
 
     private fun geraChavePix(randomica: Boolean, idValido: Boolean, tipo: String): NovaChavePixRequest {
         return NovaChavePixRequest(
-            idCliente = if (idValido) "c56dfef4-7901-44fb-84e2-a2cefb157890" else "naoEValido",
             valor = if (randomica) null else "email@email.com",
-            tipoDeChave = TipoDeChave.valueOf(tipo),
-            tipoDeConta = TipoDeConta.CONTA_CORRENTE
+            tipoDeChave = TipoDeChaveRequest.valueOf(tipo),
+            tipoDeConta = TipoDeContaRequest.CONTA_CORRENTE
         )
     }
 }
