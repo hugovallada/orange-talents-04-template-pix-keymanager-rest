@@ -4,12 +4,10 @@ import br.com.zup.hugovallada.CadastraChavePixGrpcRequest
 import br.com.zup.hugovallada.TipoDeChave
 import br.com.zup.hugovallada.TipoDeConta
 import br.com.zup.hugovallada.util.validator.ValidPixKey
-import br.com.zup.hugovallada.util.validator.ValidUUID
 import io.micronaut.core.annotation.Introspected
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 import java.util.*
-import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Introspected
@@ -20,7 +18,7 @@ data class NovaChavePixRequest(
     val tipoDeChave: TipoDeChaveRequest?,
     @field:NotNull
     val tipoDeConta: TipoDeContaRequest?
-){
+) {
     fun toGrpc(idCliente: UUID): CadastraChavePixGrpcRequest {
         return CadastraChavePixGrpcRequest.newBuilder()
             .setIdCliente(idCliente.toString())
@@ -31,9 +29,9 @@ data class NovaChavePixRequest(
     }
 }
 
-enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave){
+enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
 
-    CPF(TipoDeChave.CPF){
+    CPF(TipoDeChave.CPF) {
         override fun valida(chave: String?): Boolean {
             return chave!!.matches("^[0-9]{11}\$".toRegex()) && CPFValidator().run {
                 initialize(null)
@@ -41,7 +39,7 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave){
             }
         }
     },
-    EMAIL(TipoDeChave.EMAIL){
+    EMAIL(TipoDeChave.EMAIL) {
         override fun valida(chave: String?): Boolean {
             return EmailValidator().run {
                 initialize(null)
@@ -50,22 +48,22 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave){
         }
     },
 
-    TELEFONE_CELULAR(TipoDeChave.TELEFONE_CELULAR){
+    TELEFONE_CELULAR(TipoDeChave.TELEFONE_CELULAR) {
         override fun valida(chave: String?): Boolean {
             return chave!!.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
         }
     },
 
-    CHAVE_ALEATORIA(TipoDeChave.CHAVE_ALEATORIA){
+    CHAVE_ALEATORIA(TipoDeChave.CHAVE_ALEATORIA) {
         override fun valida(chave: String?) = chave.isNullOrBlank()
     };
 
 
-    abstract fun valida(chave: String?):Boolean
+    abstract fun valida(chave: String?): Boolean
 
 }
 
-enum class TipoDeContaRequest(val atributoGrpc: TipoDeConta){
+enum class TipoDeContaRequest(val atributoGrpc: TipoDeConta) {
     CONTA_CORRENTE(TipoDeConta.CONTA_CORRENTE),
     CONTA_POUPANCA(TipoDeConta.CONTA_POUPANCA)
 }

@@ -1,6 +1,5 @@
 package br.com.zup.hugovallada.util.validator
 
-import br.com.zup.hugovallada.TipoDeChave
 import br.com.zup.hugovallada.pix.NovaChavePixRequest
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.validation.validator.constraints.ConstraintValidator
@@ -27,7 +26,7 @@ class ValidPixKeyValidator : ConstraintValidator<ValidPixKey, NovaChavePixReques
         annotationMetadata: AnnotationValue<ValidPixKey>,
         context: ConstraintValidatorContext
     ): Boolean {
-        if(value?.tipoDeChave == null) return false
+        if (value?.tipoDeChave == null) return false
 
         return value.tipoDeChave.valida(value.valor)
     }

@@ -11,7 +11,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.validation.Valid
 
-@Controller("/api/v1/pix/{clienteId}")
+@Controller("/api/v1/clientes/{clienteId}/pix")
 @Validated
 class PixController(@Inject private val grpcClientCadastro: KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceBlockingStub) {
 
@@ -21,9 +21,12 @@ class PixController(@Inject private val grpcClientCadastro: KeyManagerGrpcServic
     fun cadastrarPix(clienteId: UUID,@Body @Valid cadastroPixRequest: NovaChavePixRequest): HttpResponse<NovaChavePixResponse> {
         LOGGER.info("Cadastrando uma chave pix...")
         grpcClientCadastro.cadastrarChave(cadastroPixRequest.toGrpc(clienteId)).run {
-            return HttpResponse.created(NovaChavePixResponse(this))
+            return HttpResponse.created(location(clienteId = clienteId, pixId = id))
         }
     }
+
+    private fun location(clienteId: UUID, pixId: String) = HttpResponse
+        .uri("/api/v1/pix/$clienteId/pix/$pixId")
 
 
 
